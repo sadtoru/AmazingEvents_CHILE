@@ -12,7 +12,7 @@ function allCards() {
     return cardAux;
 }
 let fragment = document.createDocumentFragment();
-cards = allCards(cards);
+cards = allCards();
 
 for (const card of cards) {
     let div = document.createElement('div');

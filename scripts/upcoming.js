@@ -14,7 +14,7 @@ function upcoming() {
     return upcomingAux;
 }
 let fragment = document.createDocumentFragment();
-upcomingCards = upcoming(upcomingCards);
+upcomingCards = upcoming();
 
 
 for (const eventos of upcomingCards) {

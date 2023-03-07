@@ -14,7 +14,7 @@ function pastCards() {
     return pastEventsAux;
 }
 let fragment = document.createDocumentFragment();
-pastEvents = pastCards(pastEvents);
+pastEvents = pastCards();
 
 
 for (const eventos of pastEvents) {

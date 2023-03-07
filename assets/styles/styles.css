@@ -103,9 +103,10 @@ div.container-social i:hover {
 }
 
 .category{
-  border: 1px solid var(--color-secundario2);
+  border: 2px outset var(--color-secundario2);
   border-radius: 5px;
-  padding: 3px;
+  padding: 5px;
+  display: inline-block;
 }
 
 .form-style{
