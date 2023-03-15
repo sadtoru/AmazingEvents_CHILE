@@ -72,12 +72,12 @@ function createDetailCard(arr, container) {
                                         <li class="list">Category: ${arr.category}</li>
                                         <li class="list">Place: ${arr.place}</li>
                                         <li class="list">Capacity: ${arr.capacity}</li>
-                                        <li class="list">Assistance or estimate: ${arr.assistance ? arr.assistance : arr.estimate}</li>
+                                        <li class="list">${arr.assistance ? "Assistance" : "Estimate"}: ${arr.assistance ? arr.assistance : arr.estimate}</li>
                                         <li class="list">Price: ${arr.price}</li>
                                     </ul>
                                 </div>
                                 <div class="d-flex justify-content-end">
-                                  <a href="javascript:history.back()" class="text-light btn-back align-self-center py-2 px-2 m-1">Back Home</a>
+                                  <a href="javascript:history.back()" class="text-light btn-back align-self-center py-2 px-2 m-1">Go Back</a>
                                 </div>  
                               </div>
                         </div>
@@ -128,7 +128,7 @@ function filterByInput(array, userText) {
   return arrayAux;
 }
 
-/* funcion de categorias seleccionadas */
+/* funcion de categorias seleccionadas para la funcion de superFilter en past y upcoming*/
 function selectedCategory() {
   let checkboxsCaptured = document.querySelectorAll('input[class="form-check-input"]');
   let checkboxsArray = Array.from(checkboxsCaptured);
@@ -147,4 +147,4 @@ export {
   filterByCategory,
   filterByInput,
   selectedCategory
-};
+}
