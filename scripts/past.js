@@ -1,44 +1,42 @@
 import data from "./amazing.js";
+import { pastEvents, drawCards, drawCheckboxs, listCategories, filterByCategory, filterByInput, selectedCategory } from "./functions.js";
 
-const past = document.getElementById("past");
+/* container de las cards de eventos pasados seleccionado del index que toma de referencia */
+let container = document.getElementById("past");
 
-let pastEvents = [];
+/* container de las categorias seleccionado del index que toma de referencia*/
+let containerCategories = document.getElementById('categories-container');
 
-function pastCards() {
-    let pastEventsAux = [];
-    for (let i = 0; i < data.events.length; i++) {
-        if (data.events[i].date < data.currentDate) {
-            pastEventsAux.push(data.events[i]);
-        }
+/* container del search seleccionado del index que toma de referencia */
+let searchBar = document.getElementById('search')
+
+/* llamado a las categorias con su array*/
+let categories = listCategories(data.events);
+
+/* funcion que pinta las cartas pasadas */
+drawCards(pastEvents(data), container);
+
+/* funcion que pinta los checkboxs con sus respectivos parametros */
+drawCheckboxs(categories, containerCategories);
+
+/* evento que escucha el input */
+searchBar.addEventListener('input', superFilter);
+
+/* evento que escucha el contenedor de categorias */
+containerCategories.addEventListener('change', superFilter);
+
+/* funcion que combina los filtros y tiene en cuenta las categorias seleccionadas */
+function superFilter() {
+    let filteredEvents = filterByInput(data.events, searchBar.value);
+    let selectedCategories = selectedCategory();
+    if (selectedCategories.length > 0) {
+        filteredEvents = filterByCategory(filteredEvents, selectedCategories);
     }
-    return pastEventsAux;
-}
-let fragment = document.createDocumentFragment();
-pastEvents = pastCards();
-
-
-for (const eventos of pastEvents) {
-    let div = document.createElement('div');
-    div.classList = 'col-12 col-md-6 col-lg-3 gap-4 mt-3';
-    div.innerHTML = `
-    <div class="card h-100">
-                <img src="${eventos.image}" class="card-img-top img-thumbnail p-3"
-                    alt="Image card 1">
-                <div class="card-body">
-                    <h5 class="card-title">${eventos.name}</h5>
-                    <p class="card-text">${eventos.description}</p>
-                    <p class="card-text category">${eventos.category}</p>
-                    <p class="card-text">${eventos.date}</p>
-                </div>
-                <div class="card-footer">
-                    <div class="d-flex justify-content-center align-items-center">
-                        <h6 class="mx-2 pt-2">$${eventos.price}</h6>
-                        <a class="btn-more py-2 px-2 text-light mx-2" href="../pages/details.html">Ver más</a>
-                    </div>
-                </div>
-            </div>
-    `
-    fragment.appendChild(div);
+    let pastEventsArray = pastEvents({ events: filteredEvents, currentDate: data.currentDate });
+    if (pastEventsArray.length > 0) {
+        drawCards(pastEventsArray, container);
+    } else {
+        container.innerHTML = "<p>Oops nothing to see here!</p>";
+    }
 }
 
-past.appendChild(fragment);

@@ -102,6 +102,12 @@ div.container-social i:hover {
   border-radius: .4rem;
 }
 
+.btn-back{
+  background-color: var(--color-secundario2);
+  text-decoration: none;
+  border-radius: .4rem;
+}
+
 .category{
   border: 2px outset var(--color-secundario2);
   border-radius: 5px;
