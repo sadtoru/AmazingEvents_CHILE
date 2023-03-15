@@ -73,7 +73,7 @@ function createDetailCard(arr, container) {
                                         <li class="list">Place: ${arr.place}</li>
                                         <li class="list">Capacity: ${arr.capacity}</li>
                                         <li class="list">${arr.assistance ? "Assistance" : "Estimate"}: ${arr.assistance ? arr.assistance : arr.estimate}</li>
-                                        <li class="list">Price: ${arr.price}</li>
+                                        <li class="list">Price: $${arr.price}</li>
                                     </ul>
                                 </div>
                                 <div class="d-flex justify-content-end">
