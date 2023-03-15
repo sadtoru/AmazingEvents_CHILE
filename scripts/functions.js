@@ -77,7 +77,7 @@ function createDetailCard(arr, container) {
                                     </ul>
                                 </div>
                                 <div class="d-flex justify-content-end">
-                                  <a href="../index.html" class="text-light btn-back align-self-center py-2 px-2 m-1">Back Home</a>
+                                  <a href="javascript:history.back()" class="text-light btn-back align-self-center py-2 px-2 m-1">Back Home</a>
                                 </div>  
                               </div>
                         </div>
