@@ -1,6 +1,11 @@
-import data from "./amazing.js";
-import { createDetailCard } from "./functions.js"
+import { createDetailCard, getData } from "./functions.js"
 
+const getDetails = async () => {
+    const data = await getData();
+    if (!data) {
+      console.log("Couldn't find any data");
+      return;
+    }
 
 const queryString = location.search;
 const params = new URLSearchParams(queryString);
@@ -12,3 +17,6 @@ let detailContainer = document.getElementById('detailContainer');
 
 createDetailCard(card, detailContainer)
 
+}
+
+getDetails();
