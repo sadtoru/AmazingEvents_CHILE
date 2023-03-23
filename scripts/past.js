@@ -1,4 +1,4 @@
-import { pastEvents, drawCards, drawCheckboxs, listCategories, filterByCategory, filterByInput, selectedCategory } from "./functions.js";
+import { pastEvents, drawCards, drawCheckboxs, superFilter } from "./functions.js";
 
 /* container de las cards de eventos pasados seleccionado del index que toma de referencia */
 let container = document.getElementById("past");
@@ -15,37 +15,21 @@ async function getPast(){
     .then(data => {
     
     /* guardando la data */
-    let dataEvents = data.events
+    let past = pastEvents(data);
 
-    /* llamado a las categorias con su array*/
-    let categories = listCategories(dataEvents);
-  
+    let dataEvents = data.events;
+    
     /* funcion que pinta las cartas pasadas */
-    drawCards(pastEvents(data), container);
+    drawCards(past, container);
 
     /* funcion que pinta los checkboxs con sus respectivos parametros */
-    drawCheckboxs(categories, containerCategories);
+    drawCheckboxs(dataEvents, containerCategories);
 
     /* evento que escucha el input */
-    searchBar.addEventListener('input', superFilter);
+    searchBar.addEventListener('input', () => superFilter(past, container, searchBar));
 
     /* evento que escucha el contenedor de categorias */
-    containerCategories.addEventListener('change', superFilter);
-
-    /* funcion que combina los filtros y tiene en cuenta las categorias seleccionadas */
-    function superFilter() {
-        let filteredEvents = filterByInput(dataEvents, searchBar.value);
-        let selectedCategories = selectedCategory();
-        if (selectedCategories.length > 0) {
-            filteredEvents = filterByCategory(filteredEvents, selectedCategories);
-        }
-        let pastEventsArray = pastEvents({ events: filteredEvents, currentDate: data.currentDate });
-        if (pastEventsArray.length > 0) {
-            drawCards(pastEventsArray, container);
-        } else {
-            container.innerHTML = "<p>Oops nothing to see here!</p>";
-        }
-    }
+    containerCategories.addEventListener('change', () => superFilter(past, container, searchBar));
   
     }).catch(error => console.error(error))
   }

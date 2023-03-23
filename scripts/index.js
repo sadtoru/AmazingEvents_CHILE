@@ -1,4 +1,4 @@
-import { drawCards, drawCheckboxs, listCategories, filterByCategory, filterByInput } from "./functions.js";
+import { drawCards, drawCheckboxs, superFilter } from "./functions.js";
 
 /* container de las cards seleccionado del index que toma de referencia */
   let container = document.getElementById('cards');
@@ -17,27 +17,17 @@ async function getIndex(){
   /* guardando la data */
   let dataEvents = data.events
 
-    /* llamado a las categorias con su array */
-  let categories = listCategories(dataEvents);
-
   /* funcion que pinta las cartas con sus respectivos parametros */
   drawCards(dataEvents, container);
 
   /* funcion que pinta los checkboxs con sus respectivos parametros */
-  drawCheckboxs(categories, containerCategories);
+  drawCheckboxs(dataEvents, containerCategories);
 
-  /* evento que escucha el input */
-  searchBar.addEventListener('input', superFilter);
+  /* evento que escucha el input con el superFilter*/
+  searchBar.addEventListener('input', () => superFilter(dataEvents, container, searchBar));
 
-  /* evento que escucha el contenedor de categorias */
-  containerCategories.addEventListener('change', superFilter);
-
-  /* funcion que combina los filtros */
-  function superFilter() {
-    let firstFilter = filterByInput(dataEvents, searchBar.value);
-    let secondFilter = filterByCategory(firstFilter);
-    drawCards(secondFilter, container);
-  }
+  /* evento que escucha el contenedor de categorias con el superFilter*/
+  containerCategories.addEventListener('change', () => superFilter(dataEvents, container, searchBar));
 
   }).catch(error => console.error(error))
 }

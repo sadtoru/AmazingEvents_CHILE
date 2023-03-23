@@ -1,4 +1,4 @@
-import { futureEvents, drawCards, drawCheckboxs, listCategories, filterByCategory, filterByInput, selectedCategory } from "./functions.js";
+import { futureEvents, drawCards, drawCheckboxs, superFilter } from "./functions.js";
 
 /* container de las cards de eventos futuros seleccionado del index que toma de referencia */
 let container = document.getElementById("upcoming");
@@ -15,37 +15,21 @@ async function getUpcoming(){
     .then(data => {
     
     /* guardando la data */
-    let dataEvents = data.events
+    let future = futureEvents(data);
 
-    /* llamado a las categorias con su array*/
-    let categories = listCategories(dataEvents);
-  
+    let dataEvents = data.events;
+    
     /* funcion que pinta las cartas futuras con sus respectivos parametros */
-    drawCards(futureEvents(data), container);
+    drawCards(future, container);
 
     /* funcion que pinta los checkboxs con sus respectivos parametros */
-    drawCheckboxs(categories, containerCategories);
+    drawCheckboxs(dataEvents, containerCategories);
 
     /* evento que escucha el input */
-    searchBar.addEventListener('input', superFilter);
+    searchBar.addEventListener('input', () => superFilter(future, container, searchBar));
 
     /* evento que escucha el contenedor de categorias */
-    containerCategories.addEventListener('change', superFilter);
-
-    /* funcion que combina los filtros y tiene en cuenta las categorias seleccionadas */
-    function superFilter() {
-        let filteredEvents = filterByInput(dataEvents, searchBar.value);
-        let selectedCategories = selectedCategory();
-        if (selectedCategories.length > 0) {
-            filteredEvents = filterByCategory(filteredEvents, selectedCategories);
-        }
-        let futureEventsArray = futureEvents({ events: filteredEvents, currentDate: data.currentDate });
-        if (futureEventsArray.length > 0) {
-            drawCards(futureEventsArray, container);
-        } else {
-            container.innerHTML = "<p>Oops nothing to see here!</p>";
-        }
-    }
+    containerCategories.addEventListener('change', () => superFilter(future, container, searchBar));
   
     }).catch(error => console.error(error))
   }
