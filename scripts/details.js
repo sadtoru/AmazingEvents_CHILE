@@ -1,14 +1,23 @@
-import data from "./amazing.js";
 import { createDetailCard } from "./functions.js"
 
+async function getDetails() {
+  await fetch("../data/amazing.json")
+    .then(response => response.json())
+    .then(data => {
 
-const queryString = location.search;
-const params = new URLSearchParams(queryString);
-const cardId = params.get('id');
+      const queryString = location.search;
+      const params = new URLSearchParams(queryString);
+      let cardId = params.get('id');
 
-const card = data.events.find(card => card._id == cardId);
+      let card = data.events.find(card => card._id == cardId);
 
-let detailContainer = document.getElementById('detailContainer');
+      /* container del detalle seleccionado */
+      let detailContainer = document.getElementById('detailContainer');
 
-createDetailCard(card, detailContainer)
+      /* funcion que dibuja el detalle del evento */
+      createDetailCard(card, detailContainer)
 
+    })
+}
+
+getDetails();

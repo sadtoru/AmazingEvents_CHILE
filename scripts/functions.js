@@ -41,7 +41,7 @@ function drawCards(arr, container) {
           <div class="card-footer">
             <div class="d-flex justify-content-center align-items-center">
               <h6 class="mx-2 pt-2">$${arr[i].price}</h6>
-              <a class="btn-more py-2 px-2 text-light mx-2" href="../pages/details.html?id=${arr[i]._id}">See More</a>
+              <a class="btn-more py-2 px-2 text-light mx-2" href="../pages/details.html?id=${arr[i]._id}">Details</a>
             </div>
           </div>
         </div>
@@ -76,8 +76,8 @@ function createDetailCard(arr, container) {
                                         <li class="list">Price: $${arr.price}</li>
                                     </ul>
                                 </div>
-                                <div class="d-flex justify-content-end">
-                                  <a href="javascript:history.back()" class="text-light btn-back align-self-center py-2 px-2 m-1">Go Back</a>
+                                <div class="d-md-flex justify-content-md-end">
+                                  <a href="javascript:history.back()" class="text-light btn-back py-2 px-2 m-1">Go Back</a>
                                 </div>  
                               </div>
                         </div>
@@ -137,6 +137,94 @@ function selectedCategory() {
   return checkboxsMap;
 }
 
+/* funcion que muestra el evento con más asistencia */
+function eventWithMostAssistance(events) {
+  let highestAttendancePercentage = -1;
+  let eventWithHighestAttendance = "";
+  events.forEach(function (event) {
+    const attendance = event.assistance ? event.assistance : event.estimate;
+    const capacity = event.capacity;
+    const percentage = (attendance / capacity) * 100;
+    if (percentage > highestAttendancePercentage) {
+      highestAttendancePercentage = percentage;
+      eventWithHighestAttendance = event.name;
+    }
+  });
+  return eventWithHighestAttendance;
+}
+
+/* funcion que muestra el evento con menos asistencia */
+function eventWithLowestAssistance(events) {
+  let sortedEvents = events.slice().sort(function (a, b) {
+    const aAttendance = a.assistance || a.estimate || 0;
+    const bAttendance = b.assistance || b.estimate || 0;
+    const aPercentage = (aAttendance / a.capacity) * 100;
+    const bPercentage = (bAttendance / b.capacity) * 100;
+    return aPercentage - bPercentage;
+  });
+  return sortedEvents[0].name;
+}
+
+/* funcion que muestra el evento con mayor capacidad */
+function eventWithLargestCapacity(events) {
+  let sortedEvents = events.slice().sort(function (a, b) {
+    return b.capacity - a.capacity;
+  });
+  return sortedEvents[0].name;
+}
+
+/* funcion calcular ganancias totales */
+function calculateRevenues(events) {
+  let revenues = 0; events.forEach(event => {
+    const revenue = event.price * (event.estimate || event.assistance);
+    revenues += revenue;
+  });
+  return revenues;
+}
+
+/* funcion calcular el porcentaje de asistencia */
+function calculateAttendancePercentage(events) {
+  const totalAssistance = events.reduce((total, event) => {
+    return total + (event.estimate || event.assistance);
+  }, 0);
+  const capacity = events.reduce((maxCapacity, event) => {
+    return event.capacity > maxCapacity ? event.capacity : maxCapacity;
+  }, 0);
+  return (totalAssistance / (events.length * capacity)) * 100;
+}
+
+/* funcion que crea la tabla */
+function createTable(category, revenues, attendancePercentage, container) {
+  const tr = document.createElement("tr");
+  tr.innerHTML = `<td>${category}</td>
+                  <td>$${revenues}</td>
+                  <td>${attendancePercentage.toFixed(2)}%</td>`;
+  container.appendChild(tr);
+}
+
+/* funcion que agrupa por categoria */
+function groupByCategory(events, container) {
+  const groupedCategories = events.reduce((acc, event) => {
+    if (!acc[event.category]) {
+      acc[event.category] = [];
+    }
+    acc[event.category].push(event);
+    return acc;
+  }, {});
+
+  for (const category in groupedCategories) {
+    const events = groupedCategories[category];
+    const revenues = calculateRevenues(events);
+    const attendancePercentage = calculateAttendancePercentage(events);
+    createTable(category, revenues, attendancePercentage, container);
+  }
+}
+
+/* funcion que inserta la data en un container */
+function insertingData(event, container) {
+  container.innerText = event;
+}
+
 export {
   pastEvents,
   futureEvents,
@@ -146,5 +234,11 @@ export {
   createDetailCard,
   filterByCategory,
   filterByInput,
-  selectedCategory
+  selectedCategory,
+  eventWithMostAssistance,
+  eventWithLowestAssistance,
+  eventWithLargestCapacity,
+  createTable,
+  groupByCategory,
+  insertingData
 }
