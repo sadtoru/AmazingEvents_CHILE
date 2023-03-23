@@ -102,6 +102,13 @@ div.container-social i:hover {
   border-radius: .4rem;
 }
 
+.category{
+  border: 2px outset var(--color-secundario2);
+  border-radius: 5px;
+  padding: 5px;
+  display: inline-block;
+}
+
 .form-style{
   width: 30rem;
 }
