@@ -36,7 +36,7 @@ function drawCards(arr, container) {
     fragment.appendChild(div);
   }
   if (arr.length == 0) {
-    container.innerHTML = `<h1>Oops! Nothing to see here.</h1>`;
+    container.innerHTML = `<h3>Oops! Nothing to see here.</h3>`;
   }
   container.appendChild(fragment);
 }
