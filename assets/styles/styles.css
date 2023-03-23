@@ -144,6 +144,15 @@ div.container-social i:hover {
   color: var(--color-terciario);
 }
 
+body::-webkit-scrollbar{
+  width: 7px; 
+}
+
+body::-webkit-scrollbar-thumb{
+  background: var(--color-secundario2);
+  border-radius: 5px;
+}
+
 @media (min-width: 0px) and (max-width: 768px) {
   .large-card {
     height: 43rem;
