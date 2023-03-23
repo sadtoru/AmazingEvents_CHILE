@@ -41,7 +41,7 @@ function drawCards(arr, container) {
           <div class="card-footer">
             <div class="d-flex justify-content-center align-items-center">
               <h6 class="mx-2 pt-2">$${arr[i].price}</h6>
-              <a class="btn-more py-2 px-2 text-light mx-2" href="../pages/details.html?id=${arr[i]._id}">See More</a>
+              <a class="btn-more py-2 px-2 text-light mx-2" href="../pages/details.html?id=${arr[i]._id}">Details</a>
             </div>
           </div>
         </div>
@@ -76,8 +76,8 @@ function createDetailCard(arr, container) {
                                         <li class="list">Price: $${arr.price}</li>
                                     </ul>
                                 </div>
-                                <div class="d-flex justify-content-end">
-                                  <a href="javascript:history.back()" class="text-light btn-back align-self-center py-2 px-2 m-1">Go Back</a>
+                                <div class="d-md-flex justify-content-md-end">
+                                  <a href="javascript:history.back()" class="text-light btn-back py-2 px-2 m-1">Go Back</a>
                                 </div>  
                               </div>
                         </div>
@@ -135,26 +135,6 @@ function selectedCategory() {
   let checkboxsChecked = checkboxsArray.filter(checkes => checkes.checked);
   let checkboxsMap = checkboxsChecked.map(checkeds => checkeds.value);
   return checkboxsMap;
-}
-
-/* funcion que carga la data */
-async function loadData() {
-  const response = await fetch("/data/amazing.json");
-  const dataJson = await response.json();
-  return dataJson;
-}
-
-/* funcion que trae la data */
-async function getData() {
-  try {
-    const dataJson = await loadData();
-    const currentDate = dataJson.currentDate;
-    const events = dataJson.events;
-    return { currentDate, events };
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
 }
 
 /* funcion que muestra el evento con más asistencia */
@@ -255,7 +235,6 @@ export {
   filterByCategory,
   filterByInput,
   selectedCategory,
-  getData,
   eventWithMostAssistance,
   eventWithLowestAssistance,
   eventWithLargestCapacity,

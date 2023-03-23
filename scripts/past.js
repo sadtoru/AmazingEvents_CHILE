@@ -1,23 +1,25 @@
-import { pastEvents, drawCards, drawCheckboxs, listCategories, filterByCategory, filterByInput, selectedCategory, getData } from "./functions.js";
+import { pastEvents, drawCards, drawCheckboxs, listCategories, filterByCategory, filterByInput, selectedCategory } from "./functions.js";
 
-const getPast = async () => {
-    const data = await getData();
-    if (!data) {
-        console.log("Couldn't find any data");
-        return;
-    }
-    /* container de las cards de eventos pasados seleccionado del index que toma de referencia */
-    let container = document.getElementById("past");
+/* container de las cards de eventos pasados seleccionado del index que toma de referencia */
+let container = document.getElementById("past");
 
-    /* container de las categorias seleccionado del index que toma de referencia*/
-    let containerCategories = document.getElementById('categories-container');
+/* container de las categorias seleccionado del index que toma de referencia*/
+let containerCategories = document.getElementById('categories-container');
 
-    /* container del search seleccionado del index que toma de referencia */
-    let searchBar = document.getElementById('search')
+/* container del search seleccionado del index que toma de referencia */
+let searchBar = document.getElementById('search');
+
+async function getPast(){
+    await fetch ("../data/amazing.json")
+    .then(response => response.json())
+    .then(data => {
+    
+    /* guardando la data */
+    let dataEvents = data.events
 
     /* llamado a las categorias con su array*/
-    let categories = listCategories(data.events);
-
+    let categories = listCategories(dataEvents);
+  
     /* funcion que pinta las cartas pasadas */
     drawCards(pastEvents(data), container);
 
@@ -32,7 +34,7 @@ const getPast = async () => {
 
     /* funcion que combina los filtros y tiene en cuenta las categorias seleccionadas */
     function superFilter() {
-        let filteredEvents = filterByInput(data.events, searchBar.value);
+        let filteredEvents = filterByInput(dataEvents, searchBar.value);
         let selectedCategories = selectedCategory();
         if (selectedCategories.length > 0) {
             filteredEvents = filterByCategory(filteredEvents, selectedCategories);
@@ -44,6 +46,8 @@ const getPast = async () => {
             container.innerHTML = "<p>Oops nothing to see here!</p>";
         }
     }
-}
+  
+    }).catch(error => console.error(error))
+  }
 
 getPast();
