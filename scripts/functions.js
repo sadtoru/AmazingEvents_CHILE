@@ -1,55 +1,43 @@
 /* funcion que trae por si sola los past events */
 function pastEvents(myData) {
-  let arrayAux = [];
-  arrayAux = myData.events.filter(
-    (myEvent) => Date.parse(myEvent.date) < Date.parse(myData.currentDate)
-  );
-  return arrayAux;
+  return myData.events.filter((event) => event.date < myData.currentDate);
 }
 
 /* funcion que trae por si sola los future events */
 function futureEvents(myData) {
-  let arrayAux = [];
-  arrayAux = myData.events.filter(
-    (myEvent) => Date.parse(myEvent.date) > Date.parse(myData.currentDate)
-  );
-  return arrayAux;
+  return myData.events.filter((event) => event.date > myData.currentDate);
 }
 
 /* funcion que pinta las cartas en el html */
 function drawCards(arr, container) {
   let fragment = document.createDocumentFragment();
-  if (arr.length === 0) {
-    let div = document.createElement("div");
-    div.classList = "col-12 my-5 fw-bold";
-    div.innerText = "Oops nothing to see here!";
-    fragment.appendChild(div);
-  } else {
-    for (let i = 0; i < arr.length; i++) {
-      let div = document.createElement("div");
-      div.classList = "col-12 col-md-6 col-lg-3 gap-4 mt-3";
-      div.innerHTML = `
-        <div class="card h-100">
-          <img src="${arr[i].image}" class="card-img-top img-thumbnail p-3"
-            alt="Image card 1">
-          <div class="card-body">
-            <h5 class="card-title">${arr[i].name}</h5>
-            <p class="card-text">${arr[i].description}</p>
-            <p class="card-text category">${arr[i].category}</p>
-            <p class="card-text">${arr[i].date}</p>
-          </div>
-          <div class="card-footer">
-            <div class="d-flex justify-content-center align-items-center">
-              <h6 class="mx-2 pt-2">$${arr[i].price}</h6>
-              <a class="btn-more py-2 px-2 text-light mx-2" href="../pages/details.html?id=${arr[i]._id}">Details</a>
-            </div>
+  container.innerHTML = '';
+  for (const item of arr) {
+    let div = document.createElement('div');
+    div.classList = 'col-12 col-md-6 col-lg-3 gap-4 mt-3';
+    div.innerHTML = `
+      <div class="card h-100">
+        <img src="${item.image}" class="card-img-top img-thumbnail p-3"
+          alt="${item.name}">
+        <div class="card-body">
+          <h5 class="card-title">${item.name}</h5>
+          <p class="card-text">${item.description}</p>
+          <p class="card-text category">${item.category}</p>
+          <p class="card-text">${item.date}</p>
+        </div>
+        <div class="card-footer">
+          <div class="d-flex justify-content-center align-items-center">
+            <h6 class="mx-2 pt-2">$${item.price}</h6>
+            <a class="btn-more py-2 px-2 text-light mx-2" href="../pages/details.html?id=${item._id}">Details</a>
           </div>
         </div>
-      `;
-      fragment.appendChild(div);
-    }
+      </div>
+    `;
+    fragment.appendChild(div);
   }
-  container.innerHTML = "";
+  if (arr.length == 0) {
+    container.innerHTML = `<h1>Oops! Nothing to see here.</h1>`;
+  }
   container.appendChild(fragment);
 }
 
@@ -85,27 +73,29 @@ function createDetailCard(arr, container) {
   return container.appendChild(div);
 }
 
-/* funcion de lista de categorias sin repetirse*/
-function listCategories(array) {
-  let categories = array.map((item) => item.category);
-  let categoriesNoRepeat = new Set(categories);
-  let categoriesArray = Array.from(categoriesNoRepeat);
-  return categoriesArray;
-}
+/* función que guarda las únicas categorias */
+let uniqueCategories = (events) => {
+  return events.reduce((acc, curr) => {
+      if (!acc.includes(curr.category)) {
+          acc.push(curr.category);
+      }
+      return acc;
+  }, []);
+};
 
-/* funcion de dibujar checkboxs */
+/* funcion de dibujar checkboxs con la funcion de uniqueCategories*/
 function drawCheckboxs(array, container) {
-  let fragment = document.createDocumentFragment();
-  for (const event of array) {
-    let div = document.createElement("div");
+  const fragment = document.createDocumentFragment();
+  let categories = uniqueCategories(array);
+  categories.forEach((category) => {
+    const div = document.createElement("div");
     div.classList = "form-check form-check-inline";
     div.innerHTML = `
-    <input class="form-check-input" type="checkbox" id="${event}" value="${event}"/>
-     <label class="form-check-label" for="${event}">${event}</label>
-     
+      <input class="form-check-input" type="checkbox" id="${category}" value="${category}">
+      <label class="form-check-label" for="${category}">${category}</label>
     `;
     fragment.appendChild(div);
-  }
+  });
   container.appendChild(fragment);
 }
 
@@ -128,13 +118,11 @@ function filterByInput(array, userText) {
   return arrayAux;
 }
 
-/* funcion de categorias seleccionadas para la funcion de superFilter en past y upcoming*/
-function selectedCategory() {
-  let checkboxsCaptured = document.querySelectorAll('input[class="form-check-input"]');
-  let checkboxsArray = Array.from(checkboxsCaptured);
-  let checkboxsChecked = checkboxsArray.filter(checkes => checkes.checked);
-  let checkboxsMap = checkboxsChecked.map(checkeds => checkeds.value);
-  return checkboxsMap;
+/* super filtro que utiliza filterByCategory y filterByInput*/
+function superFilter(array, container, searchBar){
+  let filteredEvent = filterByCategory(array)
+  filteredEvent = filterByInput(filteredEvent, searchBar.value)
+  drawCards(filteredEvent, container)
 }
 
 /* funcion que muestra el evento con más asistencia */
@@ -230,15 +218,12 @@ export {
   futureEvents,
   drawCards,
   drawCheckboxs,
-  listCategories,
   createDetailCard,
-  filterByCategory,
-  filterByInput,
-  selectedCategory,
   eventWithMostAssistance,
   eventWithLowestAssistance,
   eventWithLargestCapacity,
   createTable,
   groupByCategory,
-  insertingData
+  insertingData,
+  superFilter
 }
