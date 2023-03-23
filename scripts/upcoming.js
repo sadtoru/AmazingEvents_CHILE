@@ -39,9 +39,9 @@ async function getUpcoming(){
         if (selectedCategories.length > 0) {
             filteredEvents = filterByCategory(filteredEvents, selectedCategories);
         }
-        let pastEventsArray = futureEvents({ events: filteredEvents, currentDate: data.currentDate });
-        if (pastEventsArray.length > 0) {
-            drawCards(pastEventsArray, container);
+        let futureEventsArray = futureEvents({ events: filteredEvents, currentDate: data.currentDate });
+        if (futureEventsArray.length > 0) {
+            drawCards(futureEventsArray, container);
         } else {
             container.innerHTML = "<p>Oops nothing to see here!</p>";
         }
