@@ -1,4 +1,4 @@
-import { pastEvents, futureEvents, groupByCategory, insertingData } from "./functions.js";
+import { pastEvents, futureEvents, groupByCategory, drawStats } from "./functions.js";
 
 /* container de la tabla */
 let table = document.getElementById("table")
@@ -14,11 +14,10 @@ async function getStats() {
         .then(response => response.json())
         .then(data => {
 
-            let dataEvents = data.events;
             let past = pastEvents(data);
             let future = futureEvents(data);
 
-            insertingData(dataEvents, table);
+            drawStats(data, table);
 
             groupByCategory(future, upcomingEventsStats)
             groupByCategory(past, pastEventsStats)

@@ -181,17 +181,6 @@ function calculateAttendancePercentage(events) {
   return ((totalAssistance / capacity) * 100).toFixed(2);
 }
 
-
-/* funcion que crea la tabla */
-function createTable(category, revenues, attendancePercentage, container) {
-  const tr = document.createElement("tr");
-  tr.innerHTML = `<td>${category}</td>
-                  <td>$${revenues}</td>
-                  <td>${attendancePercentage}%</td>`;
-  container.appendChild(tr);
-}
-
-/* funcion que agrupa por categoria */
 function groupByCategory(events, container) {
   const groupedCategories = events.reduce((acc, event) => {
     if (!acc[event.category]) {
@@ -201,21 +190,34 @@ function groupByCategory(events, container) {
     return acc;
   }, {});
 
+  let table = '';
   for (let category in groupedCategories) {
     let events = groupedCategories[category];
     let revenues = calculateRevenues(events);
-    let attendancePercentage = calculateAttendancePercentage(events);
-    createTable(category, revenues, attendancePercentage, container);
+    let percentageAttendance = calculateAttendancePercentage(events);
+    table += `<tr>
+      <td>${category}</td>
+      <td>$${revenues}</td>
+      <td>${percentageAttendance}%</td>
+    </tr>`
   }
+
+  container.innerHTML = table;
 }
 
-/* funcion que inserta la data en un container */
-function insertingData(array, container){
+function drawStats( array, container) {
+  const events = array.events;
+
+  const mostAttendance = eventWithMostAssistance(events);
+  const lowestAttendance = eventWithLowestAssistance(events);
+  const largeCapacity = eventWithLargestCapacity(events);
+
   const tr = document.createElement("tr");
-  tr.innerHTML = `<td>${eventWithMostAssistance(array)}</td>
-                  <td>${eventWithLowestAssistance(array)}</td>
-                  <td>${eventWithLargestCapacity(array)}</td>`;
+  tr.innerHTML = `<td>${mostAttendance}</td>
+                  <td>${lowestAttendance}</td>
+                  <td>${largeCapacity}</td>`;
   container.appendChild(tr);
+
 }
 
 export {
@@ -224,8 +226,7 @@ export {
   drawCards,
   drawCheckboxs,
   createDetailCard,
-  createTable,
   groupByCategory,
-  insertingData,
-  superFilter
+  superFilter,
+  drawStats
 }
