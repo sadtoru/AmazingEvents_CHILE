@@ -74,14 +74,14 @@ function createDetailCard(arr, container) {
 }
 
 /* función que guarda las únicas categorias */
-let uniqueCategories = (events) => {
+function uniqueCategories(events) {
   return events.reduce((acc, curr) => {
-      if (!acc.includes(curr.category)) {
-          acc.push(curr.category);
-      }
-      return acc;
+    if (!acc.includes(curr.category)) {
+      acc.push(curr.category);
+    }
+    return acc;
   }, []);
-};
+}
 
 /* funcion de dibujar checkboxs con la funcion de uniqueCategories*/
 function drawCheckboxs(array, container) {
@@ -119,7 +119,7 @@ function filterByInput(array, userText) {
 }
 
 /* super filtro que utiliza filterByCategory y filterByInput*/
-function superFilter(array, container, searchBar){
+function superFilter(array, container, searchBar) {
   let filteredEvent = filterByCategory(array)
   filteredEvent = filterByInput(filteredEvent, searchBar.value)
   drawCards(filteredEvent, container)
@@ -127,35 +127,34 @@ function superFilter(array, container, searchBar){
 
 /* funcion que muestra el evento con más asistencia */
 function eventWithMostAssistance(events) {
-  let highestAttendancePercentage = -1;
-  let eventWithHighestAttendance = "";
-  events.forEach(function (event) {
-    const attendance = event.assistance ? event.assistance : event.estimate;
-    const capacity = event.capacity;
-    const percentage = (attendance / capacity) * 100;
-    if (percentage > highestAttendancePercentage) {
-      highestAttendancePercentage = percentage;
-      eventWithHighestAttendance = event.name;
-    }
+  const sortedEvents = events.slice();
+  sortedEvents.sort((eventA, eventB) => {
+    let attendanceA = eventA.assistance || eventA.estimate || 0;
+    let attendanceB = eventB.assistance || eventB.estimate || 0;
+    let percentageA = (attendanceA / eventA.capacity) * 100;
+    let percentageB = (attendanceB / eventB.capacity) * 100;
+    return percentageB - percentageA;
   });
-  return eventWithHighestAttendance;
+  return sortedEvents[0].name;
 }
 
 /* funcion que muestra el evento con menos asistencia */
 function eventWithLowestAssistance(events) {
-  let sortedEvents = events.slice().sort(function (a, b) {
-    const aAttendance = a.assistance || a.estimate || 0;
-    const bAttendance = b.assistance || b.estimate || 0;
-    const aPercentage = (aAttendance / a.capacity) * 100;
-    const bPercentage = (bAttendance / b.capacity) * 100;
-    return aPercentage - bPercentage;
+  const sortedEvents = events.slice();
+  sortedEvents.sort((eventA, eventB) => {
+    let attendanceA = eventA.assistance || eventA.estimate || 0;
+    let attendanceB = eventB.assistance || eventB.estimate || 0;
+    let percentageA = (attendanceA / eventA.capacity) * 100;
+    let percentageB = (attendanceB / eventB.capacity) * 100;
+    return percentageA - percentageB;
   });
   return sortedEvents[0].name;
 }
 
 /* funcion que muestra el evento con mayor capacidad */
 function eventWithLargestCapacity(events) {
-  let sortedEvents = events.slice().sort(function (a, b) {
+  let sortedEvents = events.slice();
+  sortedEvents.sort((a, b) => {
     return b.capacity - a.capacity;
   });
   return sortedEvents[0].name;
@@ -163,7 +162,8 @@ function eventWithLargestCapacity(events) {
 
 /* funcion calcular ganancias totales */
 function calculateRevenues(events) {
-  let revenues = 0; events.forEach(event => {
+  let revenues = 0;
+  events.forEach(event => {
     const revenue = event.price * (event.estimate || event.assistance);
     revenues += revenue;
   });
@@ -172,25 +172,15 @@ function calculateRevenues(events) {
 
 /* funcion calcular el porcentaje de asistencia */
 function calculateAttendancePercentage(events) {
-  const totalAssistance = events.reduce((total, event) => {
-    return total + (event.estimate || event.assistance);
-  }, 0);
-  const capacity = events.reduce((maxCapacity, event) => {
-    return event.capacity > maxCapacity ? event.capacity : maxCapacity;
-  }, 0);
-  return (totalAssistance / (events.length * capacity)) * 100;
+  let totalAssistance = 0;
+  let capacity = 0;
+  for (let event of events) {
+    totalAssistance += event.assistance ? event.assistance : (event.estimate ? event.estimate : 0);
+    capacity += event.capacity ? event.capacity : 0;
+  }
+  return ((totalAssistance / capacity) * 100).toFixed(2);
 }
 
-/* funcion que crea la tabla */
-function createTable(category, revenues, attendancePercentage, container) {
-  const tr = document.createElement("tr");
-  tr.innerHTML = `<td>${category}</td>
-                  <td>$${revenues}</td>
-                  <td>${attendancePercentage.toFixed(2)}%</td>`;
-  container.appendChild(tr);
-}
-
-/* funcion que agrupa por categoria */
 function groupByCategory(events, container) {
   const groupedCategories = events.reduce((acc, event) => {
     if (!acc[event.category]) {
@@ -200,17 +190,34 @@ function groupByCategory(events, container) {
     return acc;
   }, {});
 
-  for (const category in groupedCategories) {
-    const events = groupedCategories[category];
-    const revenues = calculateRevenues(events);
-    const attendancePercentage = calculateAttendancePercentage(events);
-    createTable(category, revenues, attendancePercentage, container);
+  let table = '';
+  for (let category in groupedCategories) {
+    let events = groupedCategories[category];
+    let revenues = calculateRevenues(events);
+    let percentageAttendance = calculateAttendancePercentage(events);
+    table += `<tr>
+      <td>${category}</td>
+      <td>$${revenues}</td>
+      <td>${percentageAttendance}%</td>
+    </tr>`
   }
+
+  container.innerHTML = table;
 }
 
-/* funcion que inserta la data en un container */
-function insertingData(event, container) {
-  container.innerText = event;
+function drawStats(array, container) {
+  const events = array.events;
+
+  const mostAttendance = eventWithMostAssistance(events);
+  const lowestAttendance = eventWithLowestAssistance(events);
+  const largeCapacity = eventWithLargestCapacity(events);
+
+  const tr = document.createElement("tr");
+  tr.innerHTML = `<td>${mostAttendance}</td>
+                  <td>${lowestAttendance}</td>
+                  <td>${largeCapacity}</td>`;
+  container.appendChild(tr);
+
 }
 
 export {
@@ -219,11 +226,7 @@ export {
   drawCards,
   drawCheckboxs,
   createDetailCard,
-  eventWithMostAssistance,
-  eventWithLowestAssistance,
-  eventWithLargestCapacity,
-  createTable,
   groupByCategory,
-  insertingData,
-  superFilter
+  superFilter,
+  drawStats
 }

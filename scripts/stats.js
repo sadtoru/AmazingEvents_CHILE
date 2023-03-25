@@ -1,36 +1,26 @@
-import { eventWithMostAssistance, eventWithLowestAssistance, eventWithLargestCapacity, groupByCategory, insertingData } from "./functions.js";
+import { pastEvents, futureEvents, groupByCategory, drawStats } from "./functions.js";
+
+/* container de la tabla */
+let table = document.getElementById("table")
+
+/* container de la tabla de eventos pasados */
+let pastEventsStats = document.getElementById("pastEventsByCategories")
+
+/* container de la tabla de eventos futuros */
+let upcomingEventsStats = document.getElementById("upcomingEventsByCategories")
 
 async function getStats() {
     await fetch("../data/amazing.json")
         .then(response => response.json())
         .then(data => {
-            let currentDate = data.currentDate;
-            let events = data.events;
 
-            let upcomingEvents = events.filter((event) => {
-                return event.date > currentDate;
-            });
-            let pastEvents = data.events.filter((event) => {
-                return event.date < data.currentDate;
-            });
+            let past = pastEvents(data);
+            let future = futureEvents(data);
 
-            let highestPercentage = document.getElementById("eventHighest");
-            let lowestPercentage = document.getElementById("eventLowest");
-            let largestCapacity = document.getElementById("eventLargerCapacity");
-            let upcomingEventsStats = document.getElementById("upcomingEventsByCategories")
-            let pastEventsStats = document.getElementById("pastEventsByCategories")
+            drawStats(data, table);
 
-
-            let eventWithHighestPercentageAssistance = eventWithMostAssistance(events);
-            let eventLowestPercentageAssistance = eventWithLowestAssistance(events);
-            let eventLargestCapacity = eventWithLargestCapacity(events);
-
-            insertingData(eventWithHighestPercentageAssistance, highestPercentage);
-            insertingData(eventLowestPercentageAssistance, lowestPercentage);
-            insertingData(eventLargestCapacity, largestCapacity);
-
-            groupByCategory(upcomingEvents, upcomingEventsStats)
-            groupByCategory(pastEvents, pastEventsStats)
+            groupByCategory(future, upcomingEventsStats)
+            groupByCategory(past, pastEventsStats)
 
         })
 }
