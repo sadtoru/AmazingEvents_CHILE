@@ -205,7 +205,7 @@ function groupByCategory(events, container) {
   container.innerHTML = table;
 }
 
-function drawStats( array, container) {
+function drawStats(array, container) {
   const events = array.events;
 
   const mostAttendance = eventWithMostAssistance(events);
