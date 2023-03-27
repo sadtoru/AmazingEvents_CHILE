@@ -53,7 +53,7 @@ function createDetailCard(arr, container) {
   // crear un elemento div que será la tarjeta de detalle
   let div = document.createElement("div");
   div.classList = "card mb-3 large-card";
-   // asignar el contenido html a la tarjeta de detalle
+  // asignar el contenido html a la tarjeta de detalle
   div.innerHTML = `
                 <div class="row">
                             <div class="col-12 col-md-6 d-flex justify-content-center">
@@ -79,7 +79,7 @@ function createDetailCard(arr, container) {
                               </div>
                         </div>
                 `;
-                // agregar la tarjeta de detalle al contenedor especificado
+  // agregar la tarjeta de detalle al contenedor especificado
   return container.appendChild(div);
 }
 
@@ -170,7 +170,7 @@ function eventWithMostAssistance(events) {
     // se resta el porcentaje de capacidad de eventB al porcentaje de eventA
     return percentageB - percentageA;
   });
-   // se devuelve el nombre del primer evento en el array ordenado
+  // se devuelve el nombre del primer evento en el array ordenado
   return sortedEvents[0].name;
 }
 
@@ -201,13 +201,13 @@ function eventWithLargestCapacity(events) {
   sortedEvents.sort((a, b) => {
     return b.capacity - a.capacity;
   });
-   // se devuelve el nombre del primer evento con mayor capacidad
+  // se devuelve el nombre del primer evento con mayor capacidad
   return sortedEvents[0].name;
 }
 
 /* funcion que calcula las ganancias totales */
 function calculateRevenues(events) {
-   // se inicializa la variable en 0
+  // se inicializa la variable en 0
   let revenues = 0;
   // se itera sobre cada evento en el array
   events.forEach(event => {
@@ -281,7 +281,7 @@ function drawStats(array, container) {
   tr.innerHTML = `<td>${mostAttendance}</td>
                   <td>${lowestAttendance}</td>
                   <td>${largeCapacity}</td>`;
-                  // agregamos el elemento "tr" al contenedor especificado
+  // agregamos el elemento "tr" al contenedor especificado
   container.appendChild(tr);
 }
 
